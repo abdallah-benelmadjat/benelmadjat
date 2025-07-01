@@ -31,23 +31,25 @@ document.addEventListener('DOMContentLoaded', function() {
     const galleryImages = document.querySelectorAll(".gallery-item img");
     const closeBtn = document.querySelector(".close-button");
 
-    galleryImages.forEach(img => {
-        img.onclick = function(){
-            modal.style.display = "block";
-            modalImg.src = this.src;
-            captionText.innerHTML = this.nextElementSibling.innerHTML;
+    if (modal && closeBtn) {
+        galleryImages.forEach(img => {
+            img.onclick = function(){
+                modal.style.display = "block";
+                modalImg.src = this.src;
+                captionText.innerHTML = this.nextElementSibling.innerHTML;
+            }
+        });
+
+        const closeModal = function() {
+            modal.style.display = "none";
         }
-    });
 
-    const closeModal = function() {
-        modal.style.display = "none";
-    }
+        closeBtn.onclick = closeModal;
 
-    closeBtn.onclick = closeModal;
-
-    window.onclick = function(event) {
-        if (event.target == modal) {
-            closeModal();
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                closeModal();
+            }
         }
     }
 
@@ -80,4 +82,62 @@ document.addEventListener('DOMContentLoaded', function() {
             navToggle.classList.toggle('nav-open');
         });
     }
+
+    // Update stats and database content on page load
+    fetch('benelmadjat_data.json')
+        .then(response => response.json())
+        .then(data => {
+            const totalCount = data.length;
+            const outsideAlgeriaCount = data.filter(person => !person.location.includes('Algeria')).length;
+
+            document.getElementById('total-count').textContent = totalCount;
+            document.getElementById('outside-algeria').textContent = `${((outsideAlgeriaCount / totalCount) * 100).toFixed(2)}%`;
+
+            const variantPercentage = 100; // Assuming all entries are "Benelmadjat" variants for now
+            document.getElementById('variant-percentage').textContent = `${variantPercentage}%`;
+
+            const personCardsContainer = document.getElementById('person-cards-container');
+            if (personCardsContainer) {
+                data.forEach(person => {
+                    const personCard = document.createElement('div');
+                    personCard.className = 'person-card';
+
+                    const img = document.createElement('img');
+                    img.src = person.image || 'images/default-avatar.png'; // Use a default image if none is provided
+                    img.alt = person.name;
+
+                    const personInfo = document.createElement('div');
+                    personInfo.className = 'person-info';
+
+                    const name = document.createElement('h3');
+                    name.textContent = person.name;
+
+                    const location = document.createElement('p');
+                    location.innerHTML = `<strong>Location:</strong> ${person.location}`;
+
+                    personInfo.appendChild(name);
+                    personInfo.appendChild(location);
+
+                    if (person.contact) {
+                        const contactElement = document.createElement('p');
+                        contactElement.innerHTML = `<strong>LinkedIn:</strong> <a href="${person.contact}" target="_blank">Profile</a>`;
+                        personInfo.appendChild(contactElement);
+                    }
+
+                    if (person.contact2) {
+                        const contact2Element = document.createElement('p');
+                        contact2Element.innerHTML = `<strong>Facebook:</strong> <a href="${person.contact2}" target="_blank">Profile</a>`;
+                        personInfo.appendChild(contact2Element);
+                    }
+
+                    personCard.appendChild(img);
+                    personCard.appendChild(personInfo);
+
+                    personCardsContainer.appendChild(personCard);
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching or parsing benelmadjat_data.json:', error);
+        });
 });

@@ -231,39 +231,28 @@ section.visible {
 }
 
 .name-variations ul {
-    overflow-y: hidden;
-    height: 200px;
     list-style-type: none;
     padding: 0;
     margin: 0;
-    position: relative;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
 }
 
 .name-variations ul li {
     padding: 10px;
     font-size: 1.2em;
     text-align: center;
-    background: #f9f9f9;
     border-bottom: 1px solid #ddd;
 }
 
-.name-variations ul:hover {
-    overflow-y: auto;
-}
-
-.name-variations li {
-    padding: 12px 0;
-    border-bottom: 1px solid #eee;
-    font-size: 1.1rem;
-    transition: background-color 0.3s ease;
-}
-
-.name-variations li:last-child {
+.name-variations ul li:last-child {
     border-bottom: none;
 }
 
-.name-variations li:hover {
-    background-color: #f4f0eb;
+.name-variations ul li:hover {
+    background-color: #e0e0e0;
+    cursor: pointer;
 }
 
 h2 {
@@ -344,34 +333,53 @@ h2 {
 
 .person-card {
     display: flex;
-    background: #fdfaf6;
+    align-items: center;
+    margin: 20px 0;
+    padding: 15px;
+    border: 1px solid #ddd;
     border-radius: 10px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-    overflow: hidden;
-    gap: 20px;
+    background: linear-gradient(135deg, #f9f9f9, #e0e0e0);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.person-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
 }
 
 .person-card img {
-    width: 300px; /* Fixed width for the image */
-    height: auto;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin-right: 20px;
     object-fit: cover;
-    cursor: pointer;
-    transition: transform 0.3s ease;
 }
 
-.person-card img:hover {
-    transform: scale(1.05);
-}
-
-.person-card-info {
-    padding: 20px;
+.person-info {
     flex: 1;
 }
 
-.person-card-info h3 {
-    font-family: 'Playfair Display', serif;
-    color: #8B4513;
-    margin-top: 0;
+.person-info h3 {
+    margin: 0;
+    font-size: 1.5em;
+    color: #333;
+}
+
+.person-info p {
+    margin: 5px 0;
+    font-size: 1em;
+    color: #555;
+}
+
+.person-info a {
+    color: #007BFF;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.person-info a:hover {
+    text-decoration: underline;
 }
 
 /* Responsive Styles */
