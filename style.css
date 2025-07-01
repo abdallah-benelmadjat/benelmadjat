@@ -440,11 +440,14 @@ h2 {
 
     .person-card {
         flex-direction: column;
+        align-items: center;
+        text-align: center;
     }
 
     .person-card img {
-        width: 100%;
-        height: auto;
+        width: 150px;
+        height: 150px;
+        margin-bottom: 15px;
     }
 
     .content-wrapper {

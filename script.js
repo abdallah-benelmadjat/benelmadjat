@@ -83,61 +83,76 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Update stats and database content on page load
-    fetch('benelmadjat_data.json')
-        .then(response => response.json())
-        .then(data => {
-            const totalCount = data.length;
-            const outsideAlgeriaCount = data.filter(person => !person.location.includes('Algeria')).length;
+    function loadAndDisplayData() {
+        fetch('benelmadjat_data.json', { cache: 'no-cache' })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                const totalCount = data.length;
+                const outsideAlgeriaCount = data.filter(person => !person.location.includes('Algeria')).length;
 
-            document.getElementById('total-count').textContent = totalCount;
-            document.getElementById('outside-algeria').textContent = `${((outsideAlgeriaCount / totalCount) * 100).toFixed(2)}%`;
+                const totalCountEl = document.getElementById('total-count');
+                const outsideAlgeriaEl = document.getElementById('outside-algeria');
+                const variantPercentageEl = document.getElementById('variant-percentage');
 
-            const variantPercentage = 100; // Assuming all entries are "Benelmadjat" variants for now
-            document.getElementById('variant-percentage').textContent = `${variantPercentage}%`;
+                if (totalCountEl) totalCountEl.textContent = totalCount;
+                if (outsideAlgeriaEl) outsideAlgeriaEl.textContent = `${((outsideAlgeriaCount / totalCount) * 100).toFixed(2)}%`;
 
-            const personCardsContainer = document.getElementById('person-cards-container');
-            if (personCardsContainer) {
-                data.forEach(person => {
-                    const personCard = document.createElement('div');
-                    personCard.className = 'person-card';
+                const variantPercentage = 100; // Assuming all entries are "Benelmadjat" variants for now
+                if (variantPercentageEl) variantPercentageEl.textContent = `${variantPercentage}%`;
 
-                    const img = document.createElement('img');
-                    img.src = person.image || 'images/default-avatar.png'; // Use a default image if none is provided
-                    img.alt = person.name;
+                const personCardsContainer = document.getElementById('person-cards-container');
+                if (personCardsContainer) {
+                    personCardsContainer.innerHTML = ''; // Clear existing cards
+                    data.forEach(person => {
+                        const personCard = document.createElement('div');
+                        personCard.className = 'person-card';
 
-                    const personInfo = document.createElement('div');
-                    personInfo.className = 'person-info';
+                        const img = document.createElement('img');
+                        img.src = person.image || 'images/default-avatar.png'; // Use a default image if none is provided
+                        img.alt = person.name;
 
-                    const name = document.createElement('h3');
-                    name.textContent = person.name;
+                        const personInfo = document.createElement('div');
+                        personInfo.className = 'person-info';
 
-                    const location = document.createElement('p');
-                    location.innerHTML = `<strong>Location:</strong> ${person.location}`;
+                        const name = document.createElement('h3');
+                        name.textContent = person.name;
 
-                    personInfo.appendChild(name);
-                    personInfo.appendChild(location);
+                        const location = document.createElement('p');
+                        location.innerHTML = `<strong>Location:</strong> ${person.location}`;
 
-                    if (person.contact) {
-                        const contactElement = document.createElement('p');
-                        contactElement.innerHTML = `<strong>LinkedIn:</strong> <a href="${person.contact}" target="_blank">Profile</a>`;
-                        personInfo.appendChild(contactElement);
-                    }
+                        personInfo.appendChild(name);
+                        personInfo.appendChild(location);
 
-                    if (person.contact2) {
-                        const contact2Element = document.createElement('p');
-                        contact2Element.innerHTML = `<strong>Facebook:</strong> <a href="${person.contact2}" target="_blank">Profile</a>`;
-                        personInfo.appendChild(contact2Element);
-                    }
+                        if (person.contact) {
+                            const contactElement = document.createElement('p');
+                            contactElement.innerHTML = `<strong>LinkedIn:</strong> <a href="${person.contact}" target="_blank">Profile</a>`;
+                            personInfo.appendChild(contactElement);
+                        }
 
-                    personCard.appendChild(img);
-                    personCard.appendChild(personInfo);
+                        if (person.contact2) {
+                            const contact2Element = document.createElement('p');
+                            contact2Element.innerHTML = `<strong>Facebook:</strong> <a href="${person.contact2}" target="_blank">Profile</a>`;
+                            personInfo.appendChild(contact2Element);
+                        }
 
-                    personCardsContainer.appendChild(personCard);
-                });
-            }
-        })
-        .catch(error => {
-            console.error('Error fetching or parsing benelmadjat_data.json:', error);
-        });
+                        personCard.appendChild(img);
+                        personCard.appendChild(personInfo);
+
+                        personCardsContainer.appendChild(personCard);
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching or parsing benelmadjat_data.json:', error);
+                alert('Failed to load data. Please check the console for details. Error: ' + error);
+            });
+    }
+
+    // Initial load
+    loadAndDisplayData();
 });
