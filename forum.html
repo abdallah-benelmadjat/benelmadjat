@@ -21,26 +21,22 @@
         <section id="forum">
             <h1>Welcome to the Benelmadjat Forum</h1>
             <p>Join the discussion and share your thoughts about the Benelmadjat family history and genealogy.</p>
-            <div id="cusdis_thread"
-                data-host="https://cusdis.com"
-                data-app-id="f245eddb-22df-4bf8-a1c2-46f1d66e7934">
-            </div>
-            <script async defer src="https://cusdis.com/js/cusdis.es.js"></script>
-            <script>
-                document.addEventListener('DOMContentLoaded', function() {
-                    var cusdisThread = document.getElementById('cusdis_thread');
-                    if (cusdisThread) {
-                        cusdisThread.setAttribute('data-page-id', window.location.pathname);
-                        cusdisThread.setAttribute('data-page-url', window.location.href);
-                        cusdisThread.setAttribute('data-page-title', document.title);
-                    }
-                });
-            </script>
+            <script defer src="https://cdn.commento.io/js/commento.js"></script>
+            <div id="commento"></div>
         </section>
     </main>
 
     <footer>
         <p>&copy; 2025 Benelmadjat.com</p>
     </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var forumSection = document.getElementById('forum');
+            if (forumSection) {
+                forumSection.classList.add('visible');
+            }
+        });
+    </script>
 </body>
 </html>

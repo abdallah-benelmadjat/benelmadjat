@@ -148,15 +148,10 @@ section {
     padding: 40px;
     border-radius: 10px;
     box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-    opacity: 0;
-    transform: translateY(20px);
+    opacity: 1; /* Make section visible by default */
+    transform: translateY(0); /* Remove initial transform */
     transition: opacity 0.6s ease-out, transform 0.6s ease-out;
     max-width: 900px;
-}
-
-section.visible {
-    opacity: 1;
-    transform: translateY(0);
 }
 
 .content-wrapper {
