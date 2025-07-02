@@ -95,11 +95,21 @@ document.addEventListener('DOMContentLoaded', function() {
             const totalCount = data.length;
             const outsideAlgeriaCount = data.filter(person => person.location && !person.location.includes('Algeria')).length;
 
-            document.getElementById('total-count').textContent = totalCount;
-            document.getElementById('outside-algeria').textContent = `${totalCount > 0 ? ((outsideAlgeriaCount / totalCount) * 100).toFixed(2) : 0}%`;
+            const totalCountEl = document.getElementById('total-count');
+            if (totalCountEl) {
+                totalCountEl.textContent = totalCount;
+            }
+
+            const outsideAlgeriaEl = document.getElementById('outside-algeria');
+            if (outsideAlgeriaEl) {
+                outsideAlgeriaEl.textContent = `${totalCount > 0 ? ((outsideAlgeriaCount / totalCount) * 100).toFixed(2) : 0}%`;
+            }
 
             const variantPercentage = 100; // Assuming all entries are "Benelmadjat" variants for now
-            document.getElementById('variant-percentage').textContent = `${variantPercentage}%`;
+            const variantPercentageEl = document.getElementById('variant-percentage');
+            if (variantPercentageEl) {
+                variantPercentageEl.textContent = `${variantPercentage}%`;
+            }
 
             const personCardsContainer = document.getElementById('person-cards-container');
             if (personCardsContainer) {
