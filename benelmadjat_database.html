@@ -4,8 +4,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Benelmadjat Database</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
     <link rel="stylesheet" href="style.css">
     <script src="script.js" defer></script>
+    <style>
+        .search-section {
+            margin: 20px 0;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .search-bar {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        .city-filter {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -18,6 +51,7 @@
     <main>
         <section id="stats">
             <h2>Database Statistics</h2>
+            <div id="map" style="height: 400px; margin-top: 20px; border-radius: 8px;"></div>
             <p><strong>Total People:</strong> <span id="total-count">2</span></p>
             <p><strong>Percentage Outside Algeria:</strong> <span id="outside-algeria">50%</span></p>
             <p><strong>Percentage of "Benelmadjat" Variants:</strong> <span id="variant-percentage">100%</span></p>
@@ -25,6 +59,35 @@
 
         <section id="database">
             <h2>Benelmadjat People</h2>
+            <div class="search-section">
+                <h3>Search and Filter</h3>
+                <div class="search-container">
+                    <input type="text" id="search-bar" class="search-bar" placeholder="Search by name...">
+                    <select id="city-filter" class="city-filter">
+                        <option value="">Filter by City</option>
+                        <option value="Algiers, Algeria">Algiers, Algeria</option>
+                        <option value="Annaba, Algeria">Annaba, Algeria</option>
+                        <option value="Batna, Algeria">Batna, Algeria</option>
+                        <option value="Constantine, Algeria">Constantine, Algeria</option>
+                        <option value="Doha, Qatar">Doha, Qatar</option>
+                        <option value="Ghardaia, Algeria">Ghardaia, Algeria</option>
+                        <option value="Grenoble, France">Grenoble, France</option>
+                        <option value="Marrakech, Morocco">Marrakech, Morocco</option>
+                        <option value="Mila, Algeria">Mila, Algeria</option>
+                        <option value="Montpellier, France">Montpellier, France</option>
+                        <option value="Narbonne, France">Narbonne, France</option>
+                        <option value="Ostwald, France">Ostwald, France</option>
+                        <option value="Oum El Bouaghi, Algeria">Oum El Bouaghi, Algeria</option>
+                        <option value="Paris, France">Paris, France</option>
+                        <option value="Quebec, Canada">Quebec, Canada</option>
+                        <option value="Strasbourg, France">Strasbourg, France</option>
+                        <option value="Valence, France">Valence, France</option>
+                        <option value="Vérin, France">Vérin, France</option>
+                        <option value="Ville de Paris, France">Ville de Paris, France</option>
+                        <option value="Wisconsin, Milwaukee">Wisconsin, Milwaukee</option>
+                    </select>
+                </div>
+            </div>
             <div id="person-cards-container"></div>
         </section>
     </main>
@@ -32,5 +95,52 @@
     <footer>
         <p>&copy; 2025 Benelmadjat Database</p>
     </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize map
+            const map = L.map('map').setView([28.0339, 1.6596], 4); // Centered on Algeria
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+            // Fetch data for heatmap
+            fetch('benelmadjat_data.json', { cache: 'no-cache' })
+                .then(response => response.json())
+                .then(data => {
+                    const points = data
+                        .filter(p => p.lat && p.lon)
+                        .map(p => [p.lat, p.lon, 1]); // [lat, lon, intensity]
+                    
+                    L.heatLayer(points, { 
+                        radius: 30, // Keep radius large for visibility
+                        blur: 30,   // Restore blur for a proper heatmap effect
+                        minOpacity: 0.5, // Increase opacity
+                        // By removing maxZoom, the radius is not scaled down on zoom out
+                        gradient: {0.2: 'green', 0.5: 'yellow', 1: 'red'}
+                    }).addTo(map);
+                })
+                .catch(error => console.error('Error loading heatmap data:', error));
+        });
+
+        document.getElementById('search-bar').addEventListener('input', function() {
+            const query = this.value.toLowerCase();
+            const cards = document.querySelectorAll('#person-cards-container .person-card');
+            cards.forEach(card => {
+                const name = card.querySelector('h3').textContent.toLowerCase();
+                card.style.display = name.includes(query) ? 'block' : 'none';
+            });
+        });
+
+        document.getElementById('city-filter').addEventListener('change', function() {
+            const city = this.value;
+            const cards = document.querySelectorAll('#person-cards-container .person-card');
+            cards.forEach(card => {
+                const cardCity = card.querySelector('p').textContent.includes('Location:') ? card.querySelector('p').textContent.split('Location: ')[1] : '';
+                card.style.display = city === '' || cardCity === city ? 'block' : 'none';
+            });
+        });
+    </script>
 </body>
 </html>
